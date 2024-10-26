@@ -17,6 +17,10 @@ const UserSchemma = mongoose.Schema({
     type: {
         type: String,
         required: [true, "Please provide the user type"]
+    },
+    description: {
+        type: String,
+        required: [true, "Please provide the us with your company description"]
     }
 
 });

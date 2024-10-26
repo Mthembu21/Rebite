@@ -4,6 +4,13 @@ const User = require("./models/user.model.js");
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 
+require('dotenv').config()
+
+dbString = process.env.MONGODB_URI;
+
+mongoose.connect(dbString, { useNewUrlParser: true, useUnifiedTopology: true })
+.then(() => console.log('Connected to MongoDB'))
+.catch(err => console.error('Error connecting to MongoDB:', err));
 
 const app = express();
 app.use(express.json());
@@ -63,11 +70,7 @@ app.get("/api/users", async (req, res) => {
 
 })
 
-
 app.listen(3000, ()=> {
-    mongoose.connect("mongodb://localhost:27017/local")
-    .then(() => console.log("Connected")) // if the the connection was successful
-    .catch(() => console.log("not connected")); // if there is a connection error
     console.log("Server is running on port 3000");
 })
 
