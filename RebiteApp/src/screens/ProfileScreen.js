@@ -9,8 +9,8 @@ export default function ProfileScreen() {
   const [profileImage, setProfileImage] = useState(null);
   const navigation = useNavigation();
 
-  const handleAccountDetails = () => {
-    Alert.alert('Navigating to Account Details');
+  const handleEditName = () => {
+    
   };
 
   const handleDonorList = () => {
@@ -73,7 +73,7 @@ export default function ProfileScreen() {
       </View>
 
       <View style={styles.buttonContainer}>
-        <ProfileButton title="Account Details" onPress={handleAccountDetails} />
+        <ProfileButton title="Name" onPress={handleEditName} />
         <ProfileButton title="Donor List" onPress={handleDonorList} />
         <ProfileButton title="History" onPress={handleHistory} />
         <ProfileButton title="Requested Donations" onPress={handleRequestedDonations} />
