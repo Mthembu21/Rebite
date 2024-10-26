@@ -3,6 +3,11 @@ const bcrypt = require('bcrypt');
 
 
 const UserSchemma = mongoose.Schema({
+    name: {
+        type: String,
+        required: [true, "Please enter the company name"],
+        unique: [true, "This user is already registered"]
+    },
     email: {
         type: String,
         required: [true, "Please enter an email"],
@@ -17,7 +22,11 @@ const UserSchemma = mongoose.Schema({
     type: {
         type: String,
         required: [true, "Please provide the user type"]
-    }
+    },
+    description: {
+        type: String,
+        required: [true, "Please provide the us with your company description"]
+    },
 
 });
 
