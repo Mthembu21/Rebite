@@ -1,11 +1,17 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const app = express()
+require('dotenv').config();
+
+//DB Connection String
+dbString = process.env.MONGODB_URI;
+
+//Connect to database
+mongoose.connect(dbString, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('Connected to MongoDB'))
+    .catch(err => console.error('Error connecting to MongoDB:', err));
 
 app.listen(3000, ()=> {
-    mongoose.connect("mongodb://localhost:27017/local")
-    .then(() => console.log("Connected")) // if the the connection was successful
-    .catch(() => console.log("not connected")); // if there is a connection error
     console.log("Server is running on port 3000");
 })
 
