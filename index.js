@@ -42,6 +42,20 @@ app.get('/api/donors', async (req, res) => {
         res.status(500).json({"error": error.message});
     }
 })
+// get donor by typing a charactors with a pattern that match company's name
+app.get('/api/donors/search', async (req, res) => {
+    try {
+        const donors = await User.find({
+            "name": {$regex :".*" + req.body.name + ".*"}, 
+            "type": "donor"
+        }).limit(10).exec();
+        res.status(200).json(donors)
+    }catch(error) {
+        res.status(400).json({message: error.message})
+    }
+} )
+
+
 // Endpoint for registration
 app.post('/api/users/register', async (req, res) => {
 
