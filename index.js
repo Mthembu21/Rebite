@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const User = require("./models/user.model.js");
+const Donation = require("./models/donation.model.js");
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 
@@ -82,7 +83,8 @@ app.post("/api/users/login",  async (req, res) => {
             const token = jwt.sign({
                 name: user.name,
                 email: user.email,
-                password: user.password,
+                id: user.id,
+                type: user.type
             }, "secret123")
             res.status(200).json({user: token});
         }else{
@@ -104,8 +106,57 @@ app.get("/api/users", async (req, res) => {
         res.status(500).json({message: error.message})
     }
 })
+// this endpoint is for creating a donation
+app.post('/api/donation/', async (req, res) => {
+    try {
+        const token = req.headers['x-access-token']
+        const decoded = jwt.verify(token, 'secret123');
+        console.log(decoded);
+        if (decoded.type === "donor"){
+            try{
+                // save the data
+                const donation = await Donation.create(req.body);
+                donation.donator = decoded.id
+                donation.save();
+                res.status(200).json({message: "A new donation was successfully created"});
+            }catch(error) {
+                // this code block will run if there was a problem with creating the donation
+                res.status(500).json({message: error.message});
+            }
+        }else{
+            res.status(405).json({message: "You are not allowed"});
+        }
+        
+    }catch(error) {
+        // this code block will if the user is not logged in
+        res.status(401).json({message: error.message})
+    }
+    
+})
 
-// 
+// get all donations
+app.get("/api/donations", async (req, res) => {
+    // the user 
+    try {
+        console.log(req.body.id);
+        const  donation = await Donation.findOne({_id: req.body.id});
+        res.status(200).json(donation);
+    }catch(error){
+        res.status(500).json({message: error.message})
+    }
+})
+
+app.get("/api/donations/all", async (req, res) => {
+    // the user 
+    try {
+        const  donation = await Donation.find({donator: req.body.donator});
+        res.status(200).json(donation);
+    }catch(error){
+        res.status(500).json({message: error.message})
+    }
+})
+
+
 app.listen(3000, ()=> {
     console.log("Server is running on port 3000");
 })
