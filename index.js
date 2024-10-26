@@ -27,20 +27,20 @@ app.get('/api/donors', async (req, res) => {
         const token = req.headers['x-access-token']
         const decoded = jwt.verify(token, 'secret123');
         const email = decoded.email;
+        console.log(email)
+        try{
+            const users =  await User.find({
+                "type": "donor"
+            }).select({name: 1, description: 1}).exec();
+            res.status(200).json(users)
+        }catch (error){
+            res.status(500).json({"error": error.message});
+        }
     }catch(error){
-        console.log(error)
         res.status(401).json({message: error.message})
     }
     
-    try{
-        const users =  await User.find({
-            "type": "donor"
-        }).exec();
-        console.log(users);
-        res.status(200).json(users)
-    }catch (error){
-        res.status(500).json({"error": error.message});
-    }
+
 })
 // get donor by typing a charactors with a pattern that match company's name
 app.get('/api/donors/search', async (req, res) => {
