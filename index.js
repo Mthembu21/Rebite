@@ -20,9 +20,30 @@ app.get('/' , (req, res) => {
     res.send("Hello from node API");
 });
 
-
+// get all the donors
+app.get('/api/donors', async (req, res) => {
+    // must be logged in to get user to get the donors
+    try{
+        const token = req.headers['x-access-token']
+        const decoded = jwt.verify(token, 'secret123');
+        const email = decoded.email;
+    }catch(error){
+        console.log(error)
+        res.status(401).json({message: error.message})
+    }
+    
+    try{
+        const users =  await User.find({
+            "type": "donor"
+        }).exec();
+        console.log(users);
+        res.status(200).json(users)
+    }catch (error){
+        res.status(500).json({"error": error.message});
+    }
+})
 // Endpoint for registration
-app.post('/api/users', async (req, res) => {
+app.post('/api/users/register', async (req, res) => {
 
     try{
         // save the data
@@ -45,8 +66,9 @@ app.post("/api/users/login",  async (req, res) => {
         if (correct) {
             // this code block will run if the user provided a valid password
             const token = jwt.sign({
+                name: user.name,
                 email: user.email,
-                password: user.password
+                password: user.password,
             }, "secret123")
             res.status(200).json({user: token});
         }else{
@@ -67,9 +89,9 @@ app.get("/api/users", async (req, res) => {
     }catch(error){
         res.status(500).json({message: error.message})
     }
-
 })
 
+// 
 app.listen(3000, ()=> {
     console.log("Server is running on port 3000");
 })
