@@ -45,11 +45,11 @@ app.get('/api/donors', async (req, res) => {
 
 })
 // get donor by typing a charactors with a pattern that match company's name
-app.get('/api/donors/search/:phase', async (req, res) => {
+app.get('/api/donors/search', async (req, res) => {
     // only search if you are 
     try {
         const donors = await User.find({
-            "name": {$regex :".*" + req.params.phase + ".*"}, 
+            "name": {$regex :".*" + req.query.name + ".*"}, 
             "type": "donor"
         }).select({_id: 1, name: 1, description: 1}).limit(10).exec();
         res.status(200).json(donors)
@@ -185,7 +185,6 @@ app.get("/api/donations/all", async (req, res) => {
 })
 
 // update the profile picture
-app
 
 app.listen(port, ()=> {
     console.log("Server is running on port 3000");
