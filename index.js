@@ -44,11 +44,11 @@ app.get('/api/donors', async (req, res) => {
 
 })
 // get donor by typing a charactors with a pattern that match company's name
-app.get('/api/donors/search', async (req, res) => {
+app.get('/api/donors/search/:phase', async (req, res) => {
     // only search if you are 
     try {
         const donors = await User.find({
-            "name": {$regex :".*" + req.body.name + ".*"}, 
+            "name": {$regex :".*" + req.params.phase + ".*"}, 
             "type": "donor"
         }).select({_id: 1, name: 1, description: 1}).limit(10).exec();
         res.status(200).json(donors)
@@ -71,14 +71,14 @@ app.post('/api/users/register', async (req, res) => {
 })
 
 // Endpoint to get donor by Id
-app.get('/api/users/donor', async (req, res)=> {
+app.get('/api/users/donor/:id', async (req, res)=> {
 
     // make sure that the user is authorised
     try {
         const token = req.headers['x-access-token']
         const decoded = jwt.verify(token, 'secret123');
         try {
-            const donor = await User.findById(req.body.id).select({name: 1, id: 1, description: 1, type: 2});
+            const donor = await User.findById(req.params.id).select({name: 1, id: 1, description: 1, type: 2});
             if (donor.type === "donor" ){
                 res.status(200).json(donor);
             }else {
@@ -162,15 +162,14 @@ app.post('/api/donation/', async (req, res) => {
     
 })
 
-// get all donations
-app.get("/api/donations", async (req, res) => {
+// get all donations by ID
+app.get("/api/donations/:id", async (req, res) => {
     // the user 
     try {
-        console.log(req.body.id);
-        const  donation = await Donation.findOne({_id: req.body.id});
+        const  donation = await Donation.findOne({_id: req.params.id});
         res.status(200).json(donation);
     }catch(error){
-        res.status(500).json({message: error.message})
+        res.status(500).json({message:"Donation not found"})
     }
 })
 
@@ -184,6 +183,8 @@ app.get("/api/donations/all", async (req, res) => {
     }
 })
 
+// update the profile picture
+app
 
 app.listen(3000, ()=> {
     console.log("Server is running on port 3000");
