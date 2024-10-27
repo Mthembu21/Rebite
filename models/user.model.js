@@ -27,6 +27,10 @@ const UserSchemma = mongoose.Schema({
         type: String,
         required: [true, "Please provide the us with your company description"]
     },
+    image: {
+        type: String,
+        required: false,
+    }
 
 });
 
