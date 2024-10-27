@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config()
 
 dbString = process.env.MONGODB_URI;
+port = process.env.PORT;
 
 mongoose.connect(dbString, { useNewUrlParser: true, useUnifiedTopology: true })
 .then(() => console.log('Connected to MongoDB'))
@@ -186,7 +187,7 @@ app.get("/api/donations/all", async (req, res) => {
 // update the profile picture
 app
 
-app.listen(3000, ()=> {
+app.listen(port, ()=> {
     console.log("Server is running on port 3000");
 })
 
