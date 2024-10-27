@@ -70,6 +70,32 @@ app.post('/api/users/register', async (req, res) => {
     }
 })
 
+// Endpoint to get donor by Id
+app.get('/api/users/donor', async (req, res)=> {
+
+    // make sure that the user is authorised
+    try {
+        const token = req.headers['x-access-token']
+        const decoded = jwt.verify(token, 'secret123');
+        try {
+            const donor = await User.findById(req.body.id).select({name: 1, id: 1, description: 1, type: 2});
+            if (donor.type === "donor" ){
+                res.status(200).json(donor);
+            }else {
+                res.status(404).json({message: "User not found"});
+            }
+            
+        }catch(error){
+            res.status(404).json({message: "User not found"});
+        }
+    }catch(error){
+        res.status(401).json({message: error.message})
+    }
+    // geting the user with the ID
+
+
+})
+
 // login endpoint
 app.post("/api/users/login",  async (req, res) => {
     const user = await User.findOne({
