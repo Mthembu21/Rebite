@@ -64,7 +64,7 @@ app.post('/api/users/register', async (req, res) => {
     try{
         // save the data
         const user = await User.create(req.body);
-        res.status(200).json();
+        res.status(200).json({message: "user successfully registered"});
     }catch(error) {
         res.status(500).json({message: error.message});
     }
@@ -163,7 +163,7 @@ app.post('/api/donation/', async (req, res) => {
 })
 
 // get all donations by ID
-app.get("/api/donations/:id", async (req, res) => {
+app.get("/api/donation/one/:id", async (req, res) => {
     // the user 
     try {
         const  donation = await Donation.findOne({_id: req.params.id});
@@ -173,11 +173,11 @@ app.get("/api/donations/:id", async (req, res) => {
     }
 })
 
-app.get("/api/donations/all", async (req, res) => {
+app.get("/api/donations", async (req, res) => {
     // the user 
     try {
-        const  donation = await Donation.find({donator: req.body.donator});
-        res.status(200).json(donation);
+        const  donations = await Donation.find().select({_id: 1, name: 1, description: 1});
+        res.status(200).json(donations);
     }catch(error){
         res.status(500).json({message: error.message})
     }
