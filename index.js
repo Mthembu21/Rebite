@@ -45,11 +45,12 @@ app.get('/api/donors', async (req, res) => {
 })
 // get donor by typing a charactors with a pattern that match company's name
 app.get('/api/donors/search', async (req, res) => {
+    // only search if you are 
     try {
         const donors = await User.find({
             "name": {$regex :".*" + req.body.name + ".*"}, 
             "type": "donor"
-        }).limit(10).exec();
+        }).select({_id: 1, name: 1, description: 1}).limit(10).exec();
         res.status(200).json(donors)
     }catch(error) {
         res.status(400).json({message: error.message})
@@ -85,7 +86,8 @@ app.post("/api/users/login",  async (req, res) => {
                 email: user.email,
                 id: user.id,
                 type: user.type
-            }, "secret123")
+            }, "secret123", {expiresIn: 60*60})// login expires after an hour
+
             res.status(200).json({user: token});
         }else{
             // this code block will run if the password provided is invalid
