@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const User = require("./models/user.model.js");
 const Donation = require("./models/donation.model.js");
+const Request = require("./models/request.model.js");
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 
@@ -184,9 +185,27 @@ app.get("/api/donations", async (req, res) => {
     }
 })
 
-// update the profile picture
+// allow user you make requests
+app.post('/api/request', async (req, res) => {
+    try{
+        // get the logged in user
+        const token = req.headers['x-access-token']
+        const decoded = jwt.verify(token, 'secret123');
+        if (decoded.type === "recipient"){
+            // save the data
+            const request = await Request.create(req.body);
+            request.requestor = decoded.id;
+            res.status(200).json({message: "request successfully created"});
+        }else {
+            res.status(405).json({message: "donor not allowed to send a request"});
+        }
 
-app.listen(port, ()=> {
+    }catch(error) {
+        res.status(500).json({message: error.message});
+    }
+})
+
+app.listen(3000, ()=> {
     console.log("Server is running on port 3000");
 })
 
