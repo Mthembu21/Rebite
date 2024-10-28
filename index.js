@@ -205,6 +205,27 @@ app.post('/api/request', async (req, res) => {
     }
 })
 
+app.post('/api/user/requests', async (req, res) => {
+    try {
+        const token = req.headers['x-access-token']
+        const decoded = jwt.verify(token, 'secret123');
+        // get the donation
+        console.log(decoded.type)
+        if (decoded.type === "donor"){
+            // get all the donations that the donor
+            const donations = await Donation.find({donator: decoded.id}).select({_id: 1});
+            //  get all the requests that belong to to all the fonations
+            const requests =  donations.map(async (x) => await Request.find({donation: x._d}));
+            console.log(requests);
+            res.status(200).json({message: "works as aspected"});
+        }else{
+            res.status(405).json({message: "Recieptient not allowed"})
+        }
+    }catch(error){
+        res.status(500).json({message: error.message})
+    }
+})
+
 app.listen(port, ()=> {
     console.log("Server is running on port 3000");
 })
