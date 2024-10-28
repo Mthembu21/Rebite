@@ -205,7 +205,7 @@ app.post('/api/request', async (req, res) => {
         res.status(500).json({message: error.message});
     }
 })
-
+// get requests for recieptient
 app.post('/api/user/requests', async (req, res) => {
     try {
         const token = req.headers['x-access-token']
@@ -221,6 +221,33 @@ app.post('/api/user/requests', async (req, res) => {
     }
 })
 
+// get request for donor
+app.get("/api/donations/requests", async (req, res) => {
+    try {
+        const token = req.headers['x-access-token']
+        const decoded = jwt.verify(token, 'secret123');
+        if (decoded.type === "donor"){
+            try {
+                const  donation = await Donation.findOne({_id: req.body.id});
+                console.log(donation.donator.toString() == decoded.id );
+                if (donation.donator.toString() === decoded.id){
+                    const requests = await Request.find({donation: donation._id});
+                    res.status(200).json(requests);
+                }else {
+                    res.status(405).json({message: "you are not allowed"});
+                }
+
+            }catch(error){
+                res.status(500).json({message:error.message})
+            }
+        }else{
+            res.status(405).json({message: "only donor can come here"})
+        }
+        res.status(200).json({message: "everything is as it should"});
+    }catch(error){
+        res.status(500).json({message: error.message});
+    }
+})
 app.listen(port, ()=> {
     console.log("Server is running on port 3000");
 })
